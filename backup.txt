@@ -1,0 +1,117 @@
+const express = require('express')
+const request = require('request')
+const mecab = require("mecab-ya")
+const mod = require('korean-text-analytics')
+
+var task = new mod.TaskQueue();
+const natural = require('natural');
+
+const app = express()
+const port = 5000
+
+const key = "PhMt8nOfR1C%2FO2jE8i0HhgfWTj%2BVxy3FaPdxU7FaBwrTQCX%2Bn1Q3yy40hAwAXueuYrqmNKExT2%2BornLEJFzIBg%3D%3D"
+const addr = "http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList?serviceKey="
+
+var url = 'http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList';
+var queryParams = '?' + encodeURIComponent('serviceKey') +"="+ key; /* Service Key*/
+queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
+queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('1'); /* */
+queryParams += '&' + encodeURIComponent('itemName') + '=' + encodeURIComponent('스티렌투엑스'); /* */
+queryParams += '&' + encodeURIComponent('type') + '=' + encodeURIComponent('json'); /* */
+
+var test ="http://apis.data.go.kr/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList?serviceKey=PhMt8nOfR1C%2FO2jE8i0HhgfWTj%2BVxy3FaPdxU7FaBwrTQCX%2Bn1Q3yy40hAwAXueuYrqmNKExT2%2BornLEJFzIBg%3D%3D&trustEntpName="+encodeURI('한미약품(주)')+"&pageNo=1&startPage=1&numOfRows=3&itemName="+encodeURI('한미아스피린장용정100밀리그램')+"&type=json"
+
+let hh = "광운대학교"
+
+const tokenizer = new natural.WordTokenizer();
+
+async function asyncMecab(text) {
+	return new Promise((res, rej) => {
+		mecab.pos(text, function (err, result) {
+			result?.forEach(value => {
+                
+				if (value[1].indexOf('NN'/*명사*/) == 0
+					|| value[1] == "SL" || value[1] == "OL"     //외국어
+					|| value[1] == "SH" || value[1] == "OH"     //한자
+					|| value[1] == "SN" || value[1] == "ON")    //숫자
+				{
+					if (!mecabResult[value[0]]) mecabResult[value[0]] = 1;
+					else mecabResult[value[0]]++;
+				}
+			});
+			res();
+		});
+	});
+}
+
+
+// 키워드 추출 함수
+async function extractKeywords(sentence) {
+  // 문장을 토큰화하여 단어의 배열로 변환합니다.
+    console.log(sentence)
+  const words = await asyncMecab(sentence);
+    console.log(words)
+  // 불용어(stop words)를 제거합니다.
+  const stopwords = natural.stopwords;
+  const filteredWords = words.filter(word => !stopwords.includes(word));
+
+  // 각 단어의 출현 빈도를 계산합니다.
+  const frequencyDist = new Map();
+for (const word of filteredWords) {
+  if (frequencyDist.has(word)) {
+    frequencyDist.set(word, frequencyDist.get(word) + 1);
+  } else {
+    frequencyDist.set(word, 1);
+  }
+}
+const topWords = [...frequencyDist.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+console.log(topWords);
+
+  // 출현 빈도가 가장 높은 상위 5개의 단어를 추출합니다.
+
+  return topWords;
+}
+
+
+
+app.get('/', (req, res) => { //express 앱(app)을 넣고, root directory에 오면, 
+    var tmp =url
+    tmp+=queryParams
+    
+    request(test,function(error,apiRes, body){
+      if(error){
+        console.log(error)
+      }
+      
+      var obj = JSON.parse(body)
+      let result = obj['body']['items']
+      // 예시 문장
+      const sentence = result[0]['intrcQesitm']
+      // 키워드 추출
+      //console.log(sentence)
+      //console.log(result)
+      
+      mecab.pos(sentence,(err, result) => {
+        console.log('pos : ', result);
+    });
+      //const keywords = extractKeywords(sentence); 
+      //console.log(obj)
+      //console.log(keywords)
+      res.send(obj)
+    })  
+    //console.log(tmp)
+     // res.send('Hello World!') //"Hello World!" 를 출력되게 해준다.
+  })
+  let text = '아버지가방에들어가신다.';
+
+  mecab.pos(text, (err, result) => {
+    console.log('pos : ', result);
+});
+  app.listen(port, () => {
+    console.log('ㅎㅎ')
+
+    mecab.morphs('아버지가방에들어가신다.',function(err,result){
+        console.log(result)
+    })
+  }) //포트 5000번에서 이 앱을 실행한다.
