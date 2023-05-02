@@ -1,11 +1,9 @@
 import {
     createUserAccount,
-    createOrganizationUserAccount,
     getUserInfo,
-    getOrganizationUserInfo,
     updateUserProfileInfo,
     updateUserPassword,
-    updateOrganizationPassword,
+    getMedicineList_DAO,
   } from './userDao.js';
   import { userIdCheck, organizationIdCheck } from './userProvider.js';
   import { pool } from '../../../config/database.js';
@@ -21,20 +19,21 @@ import {
   import jwt from 'jsonwebtoken';
   import { createHash } from 'crypto';
   import dotenv from 'dotenv';
+import { has } from 'core-js/core/dict';
   
   dotenv.config('../../../.env');
   // Create, Update, Delete
   
-  export async function createUser(userId, password, userName, phoneNumber, address, type, info) {
+  export async function createUser(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
     const connection = await pool.getConnection(async conn => conn);
     try {
-      const userIdCheckResult = await userIdCheck(userId);
+      const userIdCheckResult = await userIdCheck(id);
       if (userIdCheckResult.length > 0) return ID_ALREADY_EXISTS; // id가 이미 존재할 경우
   
-      const hashedPassword = createHash('sha512').update(password).digest('hex');
-      const params = [userId, hashedPassword, userName, phoneNumber, address, type, info];
+      const hashedPassword = createHash('sha512').update(pw).digest('hex');
+      const params = [id, hashedPassword, userName, birth, sex, breakfast, lunch, dinner];
       const createUserIdResult = await createUserAccount(connection, params);
-      console.log(`추가된 일반 사용자 Idx: ${createUserIdResult[0].insertId}, ID: ${userId}`);
+      console.log(`추가된 일반 사용자 Idx: ${createUserIdResult[0].insertId}, ID: ${id}`);
       connection.release();
       return SIGNUP_SUCCESS;
     } catch (err) {
@@ -42,21 +41,21 @@ import {
     }
   }
   
-  export async function userLogin(userId, password, type) {
+  export async function userLogin(id, pw) {
     const connection = await pool.getConnection(async conn => conn);
   
     try {
-      const userIdCheckResult = await userIdCheck(userId);
+      const userIdCheckResult = await userIdCheck(id);
       if (userIdCheckResult.length < 1) return LOGIN_FAILURE; // code 1002 아이디가 존재 하지 않을 경우
   
-      const hashedPassword = createHash('sha512').update(password).digest('hex');
-      const params = [userId, hashedPassword];
+      const hashedPassword = createHash('sha512').update(pw).digest('hex');
+      const params = [id, hashedPassword];
       const checkResult = await getUserInfo(connection, params);
   
       if (checkResult.length >= 1) {
         // DB에서 비교후에 id가 존재할 경우
-        const accessToken = jwt.sign({ id: userId, userType: type }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ id: userId, userType: type }, process.env.JWT_SECRET, { expiresIn: '14 days' });
+        const accessToken = jwt.sign({ id: userId}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: userId}, process.env.JWT_SECRET, { expiresIn: '14 days' });
         return {
           isSuccess: true,
           code: 1000,
@@ -74,11 +73,11 @@ import {
     }
   }
   
-  export async function changeUserPassword(userId, newPassword) {
+  export async function changeUserPassword(id, newPassword) {
     const connection = await pool.getConnection(async conn => conn);
     try {
       const hashedPassword = createHash('sha512').update(newPassword).digest('hex');
-      const params = [hashedPassword, userId];
+      const params = [hashedPassword, id];
   
       const changePasswordResult = await updateUserPassword(connection, params);
       return SUCCESS;
@@ -111,5 +110,65 @@ import {
       return SERVER_CONNECT_ERROR;
     } finally {
       connection.release();
+    }
+  }
+
+  export async function retrieveUserInfo(id){
+    const connection = await pool.getConnection(async conn => conn);
+    try {
+        const param = [id];
+        const retrieveUserInfoResult = await getUserInfo_DAO(connection, param);
+        return {
+            isSuccess: true,
+            code: 1000,
+            message: '성공',
+            data: {
+              changedRows: retrieveUserInfoResult.changedRows,
+            },
+          };
+    } catch(err){
+        return SERVER_CONNECT_ERROR;
+    }finally{
+        connection.release();
+    }
+  }
+
+  export async function getMedicineList_Service(id){
+    const connection = await pool.getConnection(async conn => conn);
+    try {
+        const getMedicineListResult = await getMedicineList_DAO(connection, id);
+        return {
+            isSuccess: true,
+            code: 1000,
+            message: '성공',
+            data: {
+              changedRows: getMedicineListResult.changedRows,
+            },
+          };
+    } catch(err){
+        return SERVER_CONNECT_ERROR;
+    }finally{
+        connection.release();
+    }
+  }
+
+  export async function updateUserInfo(id, pw, userName, sex, breakfast, lunch, dinner){
+    const connection = await pool.getConnection(async conn => conn);
+    try {
+        const hashedPassword = createHash('sha512').update(newPassword).digest('hex');
+        const param =[id, hashedPassword, userName, sex, breakfast, lunch, dinner];
+        const updateUserInfoResult = await updateUserInfo_DAO(connection, param);
+        return {
+            isSuccess: true,
+            code: 1000,
+            message: '성공',
+            data: {
+              changedRows: updateUserInfoResult.changedRows,
+            },
+          };
+    }catch(err){
+        return SERVER_CONNECT_ERROR;
+    }finally{
+        connection.release();
     }
   }

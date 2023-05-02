@@ -5,18 +5,21 @@ export const LOGIN_FAILURE = { isSuccess: false, code: 1002, message: '아이디
 export const LOGIN_ERROR = { isSuccess: false, code: 1003, message: '이용하려면 로그인 하세요' };
 
 export const PASSWORD_EMPTY = { isSuccess: false, code: 2001, message: '비밀번호를 입력하세요.' };
-export const PASSWORD_WRONG = { isSuccess: false, code: 2003, message: '비밀번호가 맞지 않습니다.' };
-export const SIGNUP_VERIFIEDPASSWORD_EMPTY = { isSuccess: false, code: 2004, message: '비밀번호 확인을 입력하세요.' };
-export const SIGNUP_NAME_EMPTY = { isSuccess: false, code: 2005, message: '이름을 입력하세요.' };
-export const UPDATE_ERROR_TYPE = { isSuccess: false, code: 2007, message: '잘못된 형식 입니다.' };
-export const ID_ALREADY_EXISTS = { isSuccess: false, code: 2008, message: '이미 존재하는 아이디 입니다.' };
-export const ID_EMPTY = { isSuccess: false, code: 2009, message: '아이디를 입력하세요' };
+export const PASSWORD_WRONG = { isSuccess: false, code: 2002, message: '비밀번호가 맞지 않습니다.' };
+export const SIGNUP_VERIFIEDPASSWORD_EMPTY = { isSuccess: false, code: 2003, message: '비밀번호 확인을 입력하세요.' };
+export const SIGNUP_NAME_EMPTY = { isSuccess: false, code: 2004, message: '이름을 입력하세요.' };
+export const UPDATE_ERROR_TYPE = { isSuccess: false, code: 2005, message: '잘못된 형식 입니다.' };
+export const ID_ALREADY_EXISTS = { isSuccess: false, code: 2006, message: '이미 존재하는 아이디 입니다.' };
+export const ID_EMPTY = { isSuccess: false, code: 2007, message: '아이디를 입력하세요' };
+export const BIRTH_EMPTY = { isSuccess: false, code: 2008, message: '생년월일을 입력하세요' };;
+export const SEX_EMPTY = { isSuccess: false, code: 2009, message: '성별을 입력하세요' };
+export const MEAL_EMPTY= { isSuccess: false, code: 2010, message: '식사시간을 입력하세요' };
 
-export const ID_LENGTH_ERROR = { isSuccess: false, code: 2012, message: '아이디 길이를 확인하세요. ' };
-export const PASSWORD_LENGTH_ERROR = { isSuccess: false, code: 2013, message: '비밀번호 길이를 확인하세요. ' };
+export const ID_LENGTH_ERROR = { isSuccess: false, code: 2010, message: '아이디 길이를 확인하세요. ' };
+export const PASSWORD_LENGTH_ERROR = { isSuccess: false, code: 2011, message: '비밀번호 길이를 확인하세요. ' };
 
-export const SIGNUP_SUCCESS = { isSuccess: true, code: 2015, message: '회원가입에 성공하였습니다. ' };
-export const SIGNUP_FAIL = { isSuccess: false, code: 2016, message: '회원가입에 실패하였습니다. ' };
+export const SIGNUP_SUCCESS = { isSuccess: true, code: 2012, message: '회원가입에 성공하였습니다. ' };
+export const SIGNUP_FAIL = { isSuccess: false, code: 2013, message: '회원가입에 실패하였습니다. ' };
 // 서버 접속 에러
 export const SERVER_CONNECT_ERROR = { isSuccess: false, code: 4000, message: '서버 접속 에러입니다.' };
 
