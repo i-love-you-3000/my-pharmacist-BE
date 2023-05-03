@@ -3,7 +3,6 @@ import {
     login_Service,
     updateUserInfo_Service,
     updatePassword_Service,
-    login_Service,
   } from './userService.js';
   import {
     SUCCESS,
@@ -19,7 +18,7 @@ import {
   import dotenv from 'dotenv';
   dotenv.config();
   
-  class userController {
+  export class userController {
     /**
      * API No. 1
      * API Name : 사용자 회원가입  API

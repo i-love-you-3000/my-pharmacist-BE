@@ -1,25 +1,38 @@
-const express = require('express');
-const app = express();
-const dotenv = require('dotenv');
-const routes = require("./config/express");
-const methodOverride = require("method-override");
+import express, { json, urlencoded } from 'express';
+import methodOverride from 'method-override';
+import logger from 'morgan';
+import routes from './config/route.js';
+import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+dotenv.config();
+const port = process.env.SERVER_PORT || 5000;
 
-class App{
-    constructor(){
-        this.app=express;
-        dotenv.config();
-        this.setMiddleWare();
-        this.getRouting();
-    }
-    setMiddleWare(){
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({extended : false}));
+class App {
+  constructor() {
+    this.app = express();
 
-        this.app.use(methodOverride());
-    }
-    getRouting(){
-        this.app.use(routes);
-    }
+    this.setMiddleWare();
+
+    this.getRouting();
+
+    this.listen();
+  }
+  setMiddleWare() {
+    this.app.use(logger('dev'));
+
+    this.app.use(json());
+    this.app.use(urlencoded({ extended: false }));
+
+    this.app.use(methodOverride());
+    this.app.use(cookieParser());
+  }
+  getRouting() {
+    this.app.use('/', routes);
+  }
+  listen() {
+    this.app.listen(port, () => {
+      console.log(`Server is running on ${port}`);
+    });
+  }
 }
-
-module.exports = new App().app;
+export default new App().app;

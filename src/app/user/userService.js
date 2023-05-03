@@ -5,7 +5,7 @@ import {
     updatePassword_DAO,
     getMedicineList_DAO,
   } from './userDao.js';
-  import { pool } from '../../../config/database.js';
+  import { pool } from '../../../config/db.js';
   import {
     ID_ALREADY_EXISTS,
     SUCCESS,
@@ -18,7 +18,6 @@ import {
   import jwt from 'jsonwebtoken';
   import { createHash } from 'crypto';
   import dotenv from 'dotenv';
-import { has } from 'core-js/core/dict';
   
   dotenv.config('../../../.env');
   // Create, Update, Delete
@@ -36,7 +35,7 @@ import { has } from 'core-js/core/dict';
     }
   }
 
-  export async function createUser(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
+  export async function createUser_Service(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
     const connection = await pool.getConnection(async conn => conn);
     try {
       const userIdCheckResult = await userIdCheck(id);

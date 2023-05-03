@@ -1,15 +1,5 @@
-module.exports = {
-    passwordCheck,
-    getId,
-    createUser_DAO,
-    getUserInfo_DAO,
-    updateUserInfo_DAO,
-    updatePassword_DAO,
-    getMedicineList_DAO,
-  };
-  
   // 1. 회원 가입
-  async function createUser_DAO(connection, param) {
+export  async function createUser_DAO(connection, param) {
     const Query = `
     INSERT INTO users(id, pw, user_name, sex, breakfast, lunch, dinner, birth) VALUES (?,?,?,?,?,?,?,?);
                         `;
@@ -18,7 +8,7 @@ module.exports = {
   }
   
   // 2. 비밀번호 확인
-  async function passwordCheck(connection, param) {
+export  async function passwordCheck(connection, param) {
     const Query = `
       select id, pw from users where id = ? and pw = ?;
                           `;
@@ -27,7 +17,7 @@ module.exports = {
   }
   
   // 3. id 가져오기
-  async function getId(connection, param) {
+export  async function getId(connection, param) {
     const Query = `
         select id from users where id = ?;
                             `;
@@ -36,7 +26,7 @@ module.exports = {
   }
 
   // 4. id 찾기
-  async function findId(connection, param){
+export  async function findId(connection, param){
     const Query = `
         select id from users where username = ? and birth = ?;
     `;
@@ -45,7 +35,7 @@ module.exports = {
   }
 
   // 5. pw 찾기
-  async function findPw(connection, param){
+export  async function findPw(connection, param){
     const Query = `
         select pw from users where user_name = ? and id = ?;
     `;
@@ -54,7 +44,7 @@ module.exports = {
   }
 
   // 6. 사용자 정보 변경
-  async function updateUserInfo_DAO(connection, originParam, updateParam){
+export  async function updateUserInfo_DAO(connection, originParam, updateParam){
     const Query = `
         update users set id = ? and pw = ? and user_name = ? and breakfast = ? and lunch = ? and dinner = ? and sex = ? 
         where id = ? and pw = ?;
@@ -64,7 +54,7 @@ module.exports = {
   }
 
   // 7. 사용자 보유 약 리스트
-  async function getMedicineList_DAO(connection, param){
+export  async function getMedicineList_DAO(connection, param){
     const Query = `
         get item_seq from prescription where id = ?;
     `
@@ -74,7 +64,7 @@ module.exports = {
   }
 
   // 8. 사용자 정보 가져오기
-  async function getUserInfo_DAO(connection, param){
+export  async function getUserInfo_DAO(connection, param){
     const Query = `
         get * from users where id = ? and pw = ?;
     `
@@ -84,19 +74,9 @@ module.exports = {
   }
 
   // 9. 비밀번호 변경
-  async function updatePassword_DAO(connection, param){
+export  async function updatePassword_DAO(connection, param){
     const Query = `
         update users set pw = ? where from prescription where id = ?;
-    `
-
-    const [Rows] = await connection.query(Query, param);
-    return Rows;
-  }
-
-  // 7. 사용자 보유 약 리스트
-  async function getMedicineList_DAO(connection, param){
-    const Query = `
-        get item_seq from prescription where id = ?;
     `
 
     const [Rows] = await connection.query(Query, param);
