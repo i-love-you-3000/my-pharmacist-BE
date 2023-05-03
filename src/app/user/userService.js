@@ -1,11 +1,10 @@
 import {
-    createUserAccount,
-    getUserInfo,
-    updateUserProfileInfo,
-    updateUserPassword,
+    createUser_DAO,
+    getUserInfo_DAO,
+    updateUserInfo_DAO,
+    updatePassword_DAO,
     getMedicineList_DAO,
   } from './userDao.js';
-  import { userIdCheck, organizationIdCheck } from './userProvider.js';
   import { pool } from '../../../config/database.js';
   import {
     ID_ALREADY_EXISTS,
@@ -24,6 +23,19 @@ import { has } from 'core-js/core/dict';
   dotenv.config('../../../.env');
   // Create, Update, Delete
   
+  async function userIdCheck(userId) {
+    const connection = await pool.getConnection(async conn => conn);
+    try {
+      const userIdRow = await selectUserId(connection, userId);
+      return userIdRow;
+    } catch (err) {
+      console.log(err);
+      return SERVER_CONNECT_ERROR;
+    } finally {
+      connection.release();
+    }
+  }
+
   export async function createUser(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
     const connection = await pool.getConnection(async conn => conn);
     try {
@@ -32,7 +44,7 @@ import { has } from 'core-js/core/dict';
   
       const hashedPassword = createHash('sha512').update(pw).digest('hex');
       const params = [id, hashedPassword, userName, birth, sex, breakfast, lunch, dinner];
-      const createUserIdResult = await createUserAccount(connection, params);
+      const createUserIdResult = await createUser_DAO(connection, params);
       console.log(`추가된 일반 사용자 Idx: ${createUserIdResult[0].insertId}, ID: ${id}`);
       connection.release();
       return SIGNUP_SUCCESS;
@@ -41,7 +53,7 @@ import { has } from 'core-js/core/dict';
     }
   }
   
-  export async function userLogin(id, pw) {
+  export async function login_Service(id, pw) {
     const connection = await pool.getConnection(async conn => conn);
   
     try {
@@ -50,7 +62,7 @@ import { has } from 'core-js/core/dict';
   
       const hashedPassword = createHash('sha512').update(pw).digest('hex');
       const params = [id, hashedPassword];
-      const checkResult = await getUserInfo(connection, params);
+      const checkResult = await getUserInfo_DAO(connection, params);
   
       if (checkResult.length >= 1) {
         // DB에서 비교후에 id가 존재할 경우
@@ -73,13 +85,13 @@ import { has } from 'core-js/core/dict';
     }
   }
   
-  export async function changeUserPassword(id, newPassword) {
+  export async function updatePassword_Service(id, newPassword) {
     const connection = await pool.getConnection(async conn => conn);
     try {
       const hashedPassword = createHash('sha512').update(newPassword).digest('hex');
       const params = [hashedPassword, id];
   
-      const changePasswordResult = await updateUserPassword(connection, params);
+      const changePasswordResult = await updatePassword_DAO(connection, params);
       return SUCCESS;
     } catch (err) {
       return SERVER_CONNECT_ERROR;
@@ -89,11 +101,11 @@ import { has } from 'core-js/core/dict';
   }
   
   
-  export async function updateUserProfile(userName, phoneNumber, address, info, userId) {
+  export async function updateUserInfo_Service(userName, phoneNumber, address, info, userId) {
     const connection = await pool.getConnection(async conn => conn);
     try {
       const params = [userName, phoneNumber, address, info, userId];
-      const updateUserProfileResponse = await updateUserProfileInfo(connection, params);
+      const updateUserProfileResponse = await updateUserInfo_DAO(connection, params);
       // console.log(updateUserProfileResponse.affectedRows);
       // console.log(updateUserProfileResponse.changedRows);
       // changedRows = 0 -> 변경된 내용 없음
@@ -113,7 +125,7 @@ import { has } from 'core-js/core/dict';
     }
   }
 
-  export async function retrieveUserInfo(id){
+  export async function getUserInfo_Service(id){
     const connection = await pool.getConnection(async conn => conn);
     try {
         const param = [id];

@@ -1,8 +1,9 @@
 import {
-    createUser,
-    userLogin,
-    updateUserInfo,
-    changeUserPassword,
+    createUser_Service,
+    login_Service,
+    updateUserInfo_Service,
+    updatePassword_Service,
+    login_Service,
   } from './userService.js';
   import {
     SUCCESS,
@@ -25,7 +26,7 @@ import {
      * [POST] /app/users
      */
 
-    postUser = async function (req, res) {
+    createUser_Controller = async function (req, res) {
       // 사용자 회원가입
         // 사용자 테이블에 정보 입력
         const id = req.body.id;
@@ -46,7 +47,7 @@ import {
         if (!sex) return res.send(SEX_EMPTY);
         if (!breakfast||!lunch||!dinner) return res.send(MEAL_EMPTY);
 
-        const signUpResponse = await createUser(id, pw, userName, birth, sex, breakfast, lunch, dinner);
+        const signUpResponse = await createUser_Service(id, pw, userName, birth, sex, breakfast, lunch, dinner);
         return res.send(signUpResponse);
     };
   
@@ -55,7 +56,7 @@ import {
      *  API Name : 사용자 로그인 API
      * [POST] /app/users/login
      */
-    login = async function (req, res) {
+    login_Controller = async function (req, res) {
       // 사용자 로그인
       const id = req.body.id;
       const pw = req.body.pw;
@@ -65,7 +66,7 @@ import {
       if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
       if (pw.length < 6 || password.length > 20) return res.send(PASSWORD_LENGTH_ERROR); // code 2013
       
-      const loginResult = await userLogin(id, pw);
+      const loginResult = await login_Service(id, pw);
       res.cookie('refreshToken', loginResult.refreshToken, {
         httpOnly: true,
         maxAge: 3000000,
@@ -86,13 +87,13 @@ import {
     /**
      *  API No. 4
      *  API Name : 사용자 비밀번호 수정 API
-     * [PATCH] /app/users/edit_password
+     * [PATCH] /app/users/update_password
      */
-    editUserPassword = async function (req, res) {
+    updatePassword_Controller = async function (req, res) {
       const id = req.id;
       const newPassword = req.body.newPassword;
       if (newPassword.length < 6 || newPassword.length > 20) return res.send(PASSWORD_LENGTH_ERROR);
-      const userPasswordResult = await changeUserPassword(id, newPassword);
+      const userPasswordResult = await updatePassword_Service(id, newPassword);
       return userPasswordResult;
     };
     /**
@@ -100,9 +101,9 @@ import {
      *  API Name : 사용자 프로필 API
      * [GET] /app/users/profile
      */
-    getUserInfo = async function (req, res) {
+    getUserInfo_Controller = async function (req, res) {
       const id = req.id;
-      const infoResult = await retrieveUserInfo(id);
+      const infoResult = await getUserInfo_Service(id);
       return res.send(infoResult);
     };
     /**
@@ -110,19 +111,19 @@ import {
      *  API Name : 사용자 정보수정 API
      * [PUT] /app/users/info
      */
-    editUserInfo = async function (req, res) {
+    updateUserInfo_Controller = async function (req, res) {
       const id = req.id;
       const { pw, userName, sex, breakfast, lunch, dinner } = req.body;
     
-      const editUserProfileInfo = await updateUserInfo(id, pw, userName, sex, breakfast, lunch, dinner);
-      return res.send(editUserProfileInfo);
+      const updateUserProfileInfo = await updateUserInfo_Service(id, pw, userName, sex, breakfast, lunch, dinner);
+      return res.send(updateUserProfileInfo);
     };
     /**
      *  API No. 7
      *  API Name : 사용자 대여 리스트 API
      * [GET] /app/users/medicinelist
      */
-    getUserMedicineList = async function (req, res) {
+    getUserMedicineList_Controller = async function (req, res) {
       const id = req.id;
       const userMedicineListResult = await getMedicineList_Service(id);
       return res.send(userMedicineListResult);
