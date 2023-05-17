@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 
-import userController from "./userController.js";
+import medicineController from "./medicineController.js";
 //import { authentication } from '../../../config/jwtMiddleware.js';
 
 router.post("/", userController.createUser_Controller); // 회원가입 API
