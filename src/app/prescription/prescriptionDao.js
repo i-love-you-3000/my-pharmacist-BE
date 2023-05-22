@@ -16,9 +16,8 @@ export async function deleteMedicineInPSPT_DAO(connection, param) {
     return Rows;
 }
 
-//date로 삭제해야하나?
 export async function deletePrescription_DAO(connection, param) {
-    const Query = "delete from prescription where id=?and item_seq=?;";
+    const Query = "delete from prescription where id=?and item_seq=? and post_date =?;";
     const [Rows] = await connection.query(Query, param);
     return Rows;
 }

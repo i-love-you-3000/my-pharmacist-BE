@@ -51,10 +51,10 @@ export async function updatePrescription_Service(id, new_item_seq, item_seq) {
     }
 }
 
-export async function deleteMedicineInPSPT_Service(id, item_seq) {
+export async function deleteMedicineInPSPT_Service(id, item_seq, post_date) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [id, item_seq];
+        const param = [id, item_seq, post_date];
         const prescriptionRow = await deleteMedicineInPSPT_DAO(connection, param);
         return prescriptionRow;
     } catch (err) {

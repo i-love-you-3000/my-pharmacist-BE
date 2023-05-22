@@ -44,11 +44,12 @@ export class prescriptionController {
     deleteMedicineInPSPT_Controller = async function (req, res) {
         const id = req.body.id;
         const item_seq = req.body.item_seq;
+        const post_date = req.body.post_date;
 
         if (!id) return res.send(ID_EMPTY);
         if (!item_seq) return res.send(ITEM_SEQ_EMPTY);
 
-        const prescriptionResponse = await deleteMedicineInPSPT_Service(id, item_seq);
+        const prescriptionResponse = await deleteMedicineInPSPT_Service(id, item_seq, post_date);
         return res.send(prescriptionResponse);
     };
 
