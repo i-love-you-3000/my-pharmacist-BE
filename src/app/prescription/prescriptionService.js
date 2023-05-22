@@ -4,11 +4,11 @@ import {
     updatePrescription_DAO,
     deleteMedicineInPSPT_DAO,
     deletePrescription_DAO,
-} from "./prescriptionDao";
+} from "./prescriptionDao.js";
 import { pool } from "../../../config/db.js";
 import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
 import dotenv from "dotenv";
-
+dotenv.config();
 export async function insertPrescription_Service(id, item_seq) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
@@ -24,15 +24,16 @@ export async function insertPrescription_Service(id, item_seq) {
 }
 
 export async function getPrescription_Service(id) {
-    const connection = await pool.getConnection(async (conn) => conn);
+    //const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const prescriptionRow = await getPrescription_DAO(connection, id);
+        //const prescriptionRow = await getPrescription_DAO(connection, id);
+        const prescriptionRow = { a: 1, b: 2, c: 3 };
         return prescriptionRow;
     } catch (err) {
         console.log(err);
         return SERVER_CONNECT_ERROR;
     } finally {
-        connection.release();
+        //    connection.release();
     }
 }
 

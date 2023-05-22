@@ -20,6 +20,15 @@ export const PASSWORD_LENGTH_ERROR = { isSuccess: false, code: 2011, message: "�
 
 export const SIGNUP_SUCCESS = { isSuccess: true, code: 2012, message: "회원가입에 성공하였습니다. " };
 export const SIGNUP_FAIL = { isSuccess: false, code: 2013, message: "회원가입에 실패하였습니다. " };
+
+export const ITEM_SEQ_EMPTY = { isSuccess: false, code: 2014, message: "물품 번호를 입력하세요" };
+export const NEW_ITEM_SEQ_EMPTY = { isSuccess: false, code: 2015, message: "새로운 물품 번호를 입력하세요" };
+export const ITEM_NAME_EMPTY = { isSuccess: false, code: 2016, message: "물품 이름을 입력하세요" };
+export const CLASS_NAME_EMPTY = { isSuccess: false, code: 2017, message: "약품 종류를 입력하세요" };
+export const CHART_EMPTY = { isSuccess: false, code: 2018, message: "약품 제형을 입력하세요" };
+export const DUR_SEQ_EMPTY = { isSuccess: false, code: 2019, message: "DUR 번호를 입력하세요" };
+export const EFFECT_EMPTY = { isSuccess: false, code: 2020, message: "효능을 입력하세요" };
+
 // 서버 접속 에러
 export const SERVER_CONNECT_ERROR = { isSuccess: false, code: 4000, message: "서버 접속 에러입니다." };
 
