@@ -1,0 +1,44 @@
+import { getMethod_DAO, insertMethod_DAO, deleteMethod_DAO, updateMethod_DAO } from "./methodDao.js";
+import { pool } from "../../../config/db.js";
+import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
+
+export async function insertMethod_Service(id, itemSeq, breakfast, lunch, dinner, baw, intake_period, exp_period) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const param = [id, itemSeq, breakfast, lunch, dinner, baw, intake_period, exp_period];
+        const MedicineRow = await insertMethod_DAO(connection, param);
+        return MedicineRow;
+    } catch (err) {
+        console.log(err);
+        return SERVER_CONNECT_ERROR;
+    } finally {
+        connection.release();
+    }
+}
+
+export async function getMethod_Service(id, itemSeq) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const param = [id, itemSeq];
+        const MedicineRow = await getMethod_DAO(connection, param);
+        return MedicineRow;
+    } catch (err) {
+        console.log(err);
+        return SERVER_CONNECT_ERROR;
+    } finally {
+        connection.release();
+    }
+}
+
+export async function deleteMethod_Service(className) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const MedicineRow = await deleteMethod_DAO(connection, className);
+        return MedicineRow;
+    } catch (err) {
+        console.log(err);
+        return SERVER_CONNECT_ERROR;
+    } finally {
+        connection.release();
+    }
+}
