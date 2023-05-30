@@ -1,10 +1,10 @@
 import { Router } from "express";
 const router = Router();
 
-import medicineController from "./methodController.js";
+import methodController from "./methodController.js";
 //import { authentication } from '../../../config/jwtMiddleware.js';
 
-router.get("/test", medicineController.findSideEffect); // 회원가입 API
+router.get("/test", methodController.findSideEffect); // 회원가입 API
 //router.post("/login", userController.login_Controller); // 로그인 API
 //router.post("/logout", userController.logout); //로그아웃 API
 
