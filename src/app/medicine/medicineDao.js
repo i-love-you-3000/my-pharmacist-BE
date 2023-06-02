@@ -1,6 +1,6 @@
 // 1. 데이터 추가
 export async function addMedicine_DAO(connection, param) {
-    const Query = "insert into medicine(item_seq, item_name, class_name, dur_seq, chart, effect, image) values (?,?,?,?,?,?,?);";
+    const Query = "insert into medicine(item_seq, item_name, effect, image) values (?,?,?,?);";
     const [Rows] = await connection.query(Query, param);
     return Rows;
 }
