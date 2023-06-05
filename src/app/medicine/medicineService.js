@@ -1,4 +1,4 @@
-import { getMedicineByClass_DAO, getMedicineByItemSeq_DAO, addMedicine_DAO } from "./medicineDao.js";
+import { getMedicineItemSeq_DAO, getMedicineByItemSeq_DAO, addMedicine_DAO } from "./medicineDao.js";
 import { pool } from "../../../config/db.js";
 import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
 import mysql from "mysql2/promise";
@@ -42,10 +42,10 @@ export async function getMedicineByItemSeq_Service(itemSeq) {
     }
 }
 
-export async function getMedicineByClass_Service(className) {
-    const connection = await pool.getConnection(async (conn) => conn);
+export async function getMedicineItemSeq_Service() {
+    const connection = await dbPool.getConnection(async (conn) => conn);
     try {
-        const MedicineRow = await getMedicineByClass_DAO(connection, className);
+        const MedicineRow = await getMedicineItemSeq_DAO(connection);
         return MedicineRow;
     } catch (err) {
         console.log(err);

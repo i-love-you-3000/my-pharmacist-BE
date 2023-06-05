@@ -12,9 +12,9 @@ export async function getMedicineByItemSeq_DAO(connection, param) {
     return Rows;
 }
 
-// 3. 약 모양으로 데이터 가져오기
-export async function getMedicineByClass_DAO(connection, param) {
-    const Query = "select * from medicine where class_name= ?;";
-    const [Rows] = await connection.query(Query, param);
+// 3. 약 번호 가져오기
+export async function getMedicineItemSeq_DAO(connection) {
+    const Query = "select item_seq from medicine;";
+    const [Rows] = await connection.query(Query);
     return Rows;
 }

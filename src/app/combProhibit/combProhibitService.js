@@ -6,9 +6,19 @@ import {
 } from "./combProhibitDao.js";
 import { pool } from "../../../config/db.js";
 import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
+import mysql from "mysql2/promise";
 
+const dbConfig = {
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "gt7291",
+    database: "my_ph",
+};
+
+const dbPool = mysql.createPool(dbConfig);
 export async function insertCombProhibit_Service(itemSeq, ingrName, mixtureItemSeq, mixtureIngr, prohibitContent) {
-    const connection = await pool.getConnection(async (conn) => conn);
+    const connection = await dbPool.getConnection(async (conn) => conn);
     try {
         const param = [itemSeq, ingrName, mixtureItemSeq, mixtureIngr, prohibitContent];
         const CombProhibitRow = await insertCombProhibit_DAO(connection, param);
