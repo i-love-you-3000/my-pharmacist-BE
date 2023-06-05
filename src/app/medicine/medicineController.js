@@ -1,4 +1,4 @@
-import { addMedicine_Service, getMedicineByItemSeq_Service, getMedicineByClass_Service } from "./medicineService.js";
+import { addMedicine_Service, getMedicineByItemSeq_Service, getMedicineItemSeq_Service } from "./medicineService.js";
 import { SUCCESS } from "../../../config/baseResponseStatus.js";
 import dotenv from "dotenv";
 import request from "request";
@@ -15,9 +15,8 @@ export class medicineController {
         return res.send(addResponse);
     };
 
-    getMedicineByClass_Controller = async function (req, res) {
-        const className = req.body.className;
-        const response = await getMedicineByClass_Service(className);
+    getMedicineItemSeq_Controller = async function (req, res) {
+        const response = await getMedicineItemSeq_Service();
         return res.send(response);
     };
 
