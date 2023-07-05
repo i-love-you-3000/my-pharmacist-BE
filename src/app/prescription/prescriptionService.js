@@ -5,14 +5,25 @@ import {
     deleteMedicineInPSPT_DAO,
     deletePrescription_DAO,
 } from "./prescriptionDao.js";
-import { pool } from "../../../config/db.js";
 import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-dotenv.config();
-export async function insertPrescription_Service(id, item_seq) {
+dotenv.config({ path: "../.env" });
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_DATABASE,
+    multipleStatements: true,
+    connectionLimit: 100,
+});
+
+//prettier-ignore
+export async function insertPrescription_Service(id, item_seq, register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [id, item_seq];
+        const param = [id, item_seq, register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod];
         const prescriptionRow = await insertPrescription_DAO(connection, param);
         return prescriptionRow;
     } catch (err) {
@@ -24,23 +35,23 @@ export async function insertPrescription_Service(id, item_seq) {
 }
 
 export async function getPrescription_Service(id) {
-    //const connection = await pool.getConnection(async (conn) => conn);
+    const connection = await pool.getConnection(async (conn) => conn);
     try {
-        //const prescriptionRow = await getPrescription_DAO(connection, id);
-        const prescriptionRow = { a: 1, b: 2, c: 3 };
+        const prescriptionRow = await getPrescription_DAO(connection, id);
         return prescriptionRow;
     } catch (err) {
         console.log(err);
         return SERVER_CONNECT_ERROR;
     } finally {
-        //    connection.release();
+        connection.release();
     }
 }
 
-export async function updatePrescription_Service(id, new_item_seq, item_seq) {
+//prettier-ignore
+export async function updatePrescription_Service(id, item_seq, register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [new_item_seq, id, item_seq];
+        const param = [register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod, id, item_seq];
         const prescriptionRow = await updatePrescription_DAO(connection, param);
         return prescriptionRow;
     } catch (err) {
@@ -51,10 +62,10 @@ export async function updatePrescription_Service(id, new_item_seq, item_seq) {
     }
 }
 
-export async function deleteMedicineInPSPT_Service(id, item_seq, post_date) {
+export async function deleteMedicineInPSPT_Service(id, item_seq, register_date) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [id, item_seq, post_date];
+        const param = [id, item_seq, register_date];
         const prescriptionRow = await deleteMedicineInPSPT_DAO(connection, param);
         return prescriptionRow;
     } catch (err) {
