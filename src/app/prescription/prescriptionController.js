@@ -6,37 +6,57 @@ import {
     deletePrescription_Service,
 } from "./prescriptionService.js";
 import { ID_EMPTY, ITEM_SEQ_EMPTY, NEW_ITEM_SEQ_EMPTY } from "../../../config/baseResponseStatus.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export class prescriptionController {
     insertPrescription_Controller = async function (req, res) {
         const id = req.body.id;
         const item_seq = req.body.item_seq;
+        const register_date = req.body.item_seq;
+        const breakfast = req.body.breakfast;
+        const lunch = req.body.lunch;
+        const dinner = req.body.dinner;
+        const baw = req.body.baw;
+        const intakePeriod = req.body.intakePeriod;
+        const expPeriod = req.body.expPeriod;
 
         if (!id) return res.send(ID_EMPTY);
         if (!item_seq) return res.send(ITEM_SEQ_EMPTY);
 
-        const newPSPT = await insertPrescription_Service(id, item_seq);
+        const newPSPT = await insertPrescription_Service(
+            id,
+            item_seq,
+            register_date,
+            breakfast,
+            lunch,
+            dinner,
+            baw,
+            intakePeriod,
+            expPeriod
+        );
         return res.send(newPSPT);
     };
 
     updatePrescription_Controller = async function (req, res) {
         const id = req.body.id;
-        const new_item_seq = req.body.new_item_seq;
         const item_seq = req.body.item_seq;
+        const register_date = req.body.item_seq;
+        const breakfast = req.body.breakfast;
+        const lunch = req.body.lunch;
+        const dinner = req.body.dinner;
+        const baw = req.body.baw;
+        const intakePeriod = req.body.intakePeriod;
+        const expPeriod = req.body.expPeriod;
 
         if (!id) return res.send(ID_EMPTY);
         if (!item_seq) return res.send(ITEM_SEQ_EMPTY);
-        if (!new_item_seq) return res.send(NEW_ITEM_SEQ_EMPTY);
 
-        const prescriptionResponse = await updatePrescription_Service(id, new_item_seq, item_seq);
+        //prettier-ignore
+        const prescriptionResponse = await updatePrescription_Service(id, item_seq, register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod);
         return res.send(prescriptionResponse);
     };
 
     getPrescription_Controller = async function (req, res) {
-        const id = req.body;
+        const id = req.query.id;
         const prescriptionResponse = await getPrescription_Service(id);
         return res.send(prescriptionResponse);
     };
@@ -44,12 +64,12 @@ export class prescriptionController {
     deleteMedicineInPSPT_Controller = async function (req, res) {
         const id = req.body.id;
         const item_seq = req.body.item_seq;
-        const post_date = req.body.post_date;
+        const register_date = req.body.register_date;
 
         if (!id) return res.send(ID_EMPTY);
         if (!item_seq) return res.send(ITEM_SEQ_EMPTY);
 
-        const prescriptionResponse = await deleteMedicineInPSPT_Service(id, item_seq, post_date);
+        const prescriptionResponse = await deleteMedicineInPSPT_Service(id, item_seq, register_date);
         return res.send(prescriptionResponse);
     };
 
