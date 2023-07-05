@@ -11,6 +11,11 @@ import request from "request";
 import dotenv from "dotenv";
 dotenv.config();
 
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
 export class combProhibitController {
     insertCombProhibit_Controller = async function (req, res) {
         const itemSeq = req.body.itemSeq;
@@ -49,16 +54,20 @@ export class combProhibitController {
     loadSideEffect = async function (req, res) {
         const list = await getMedicineItemSeq_Service();
         var url = "http://apis.data.go.kr/1471000/DURPrdlstInfoService02/getUsjntTabooInfoList02";
-        var totalCount;
+        var totalCount = 0;
 
-        list.forEach(async function (itemSeq) {
+        var medicine_list = await getMedicineItemSeq_Service();
+
+        for (var i = 0; i < medicine_list.length; i++) {
+            console.log(" " + i + " :" + medicine_list[i].item_seq);
+
             var tmp = "?" + encodeURIComponent("serviceKey") + "=" + process.env.API_KEY; /* Service Key*/
             tmp += "&" + encodeURIComponent("pageNo") + "=" + encodeURIComponent("1"); /* */
             tmp += "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("1"); /* */
-            tmp += "&" + encodeURIComponent("itemSeq") + "=" + encodeURIComponent("202002585"); /* */
+            tmp += "&" + encodeURIComponent("itemSeq") + "=" + encodeURIComponent(medicine_list[i].item_seq.toString()); /* */
             tmp += "&" + encodeURIComponent("type") + "=" + encodeURIComponent("json"); /* */
 
-            request(
+            await request(
                 {
                     url: url + tmp,
                     method: "GET",
@@ -69,17 +78,23 @@ export class combProhibitController {
                     //console.log(url);
                     //console.log(body);
                     const parsedJson = JSON.parse(body);
-                    totalCount = parsedJson.body.totalCount;
-                    console.log(totalCount);
+                    totalCount = parsedJson.body.totalCount.toString();
+                    console.log(parsedJson.body.totalCount.toString());
                 }
             );
-
-            if (totalCount > 100) {
+            if (i == 10) break;
+            console.log(totalCount);
+            if (parseInt(totalCount) > 100) {
+                console.log("NOPE");
                 for (var i = 1; i <= totalCount / 100 + 1; i++) {
                     var queryParams = "?" + encodeURIComponent("serviceKey") + "=" + process.env.API_KEY; /* Service Key*/
                     queryParams += "&" + encodeURIComponent("pageNo") + "=" + encodeURIComponent(i.toString()); /* */
-                    queryParams += "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("1"); /* */
-                    queryParams += "&" + encodeURIComponent("itemSeq") + "=" + encodeURIComponent(itemSeq.toString()); /* */
+                    queryParams += "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("100"); /* */
+                    queryParams +=
+                        "&" +
+                        encodeURIComponent("itemSeq") +
+                        "=" +
+                        encodeURIComponent(medicine_list[i].item_seq.toString()); /* */
                     queryParams += "&" + encodeURIComponent("type") + "=" + encodeURIComponent("json"); /* */
                     request(
                         {
@@ -91,7 +106,7 @@ export class combProhibitController {
                             //console.log('Headers', JSON.stringify(response.headers));
                             const parsedJson = JSON.parse(body);
                             const item = parsedJson.body.items;
-                            console.log(item);
+                            console.log(response);
                             // item.forEach(async (it) => {
                             //     // const itemSeq = it.ITEM_SEQ;
                             //     // const ingrName = it.INGR_KOR_NAME;
@@ -111,11 +126,16 @@ export class combProhibitController {
                     // }
                     // await sleep(3000);
                 }
+            } else if (parseInt(totalCount) == 0) {
+                console.log("Skipped");
+                continue;
             } else {
+                console.log("here!");
                 var queryParams = "?" + encodeURIComponent("serviceKey") + "=" + process.env.API_KEY; /* Service Key*/
                 queryParams += "&" + encodeURIComponent("pageNo") + "=" + encodeURIComponent("1"); /* */
                 queryParams += "&" + encodeURIComponent("numOfRows") + "=" + encodeURIComponent("100"); /* */
-                queryParams += "&" + encodeURIComponent("itemSeq") + "=" + encodeURIComponent("202002585"); /* */
+                queryParams +=
+                    "&" + encodeURIComponent("itemSeq") + "=" + encodeURIComponent(medicine_list[i].item_seq.toString()); /* */
                 queryParams += "&" + encodeURIComponent("type") + "=" + encodeURIComponent("json"); /* */
                 request(
                     {
@@ -127,22 +147,30 @@ export class combProhibitController {
                         //console.log('Headers', JSON.stringify(response.headers));
                         const parsedJson = JSON.parse(body);
                         const item = parsedJson.body.items;
-                        console.log(item);
-                        // item.forEach(async (it) => {
-                        //     // const itemSeq = it.ITEM_SEQ;
-                        //     // const ingrName = it.INGR_KOR_NAME;
-                        //     // const mixtureItemSeq = it.MIXTURE_ITEM_SEQ;
-                        //     // const mixtureIngr = it.MIXTURE_INGR;
-                        //     // const prohibitContent = it.PROHBT_CONTENT;
+                        console.log(body);
+                        item.forEach(async (it) => {
+                            const itemSeq = it.ITEM_SEQ;
+                            const ingrName = it.INGR_KOR_NAME;
+                            const mixtureItemSeq = it.MIXTURE_ITEM_SEQ;
+                            const mixtureIngr = it.MIXTURE_INGR;
+                            const prohibitContent = it.PROHBT_CONTENT;
 
-                        //     // const response = await addMedicine_Service(itemSeq, itemName, effect, image);
-                        //     // console.log(response);
-                        //     insertCombProhibit_Controller(it, res);
-                        // });
+                            const response = await insertCombProhibit_Service(
+                                itemSeq,
+                                ingrName,
+                                mixtureItemSeq,
+                                mixtureIngr,
+                                prohibitContent
+                            );
+                            console.log(response);
+                            //insertCombProhibit_Controller(it, res);
+                            sleep(1000);
+                        });
                     }
                 );
             }
-        });
+            sleep(10000);
+        }
     };
 }
 export default new combProhibitController();
