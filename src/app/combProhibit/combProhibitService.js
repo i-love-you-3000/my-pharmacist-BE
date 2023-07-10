@@ -32,7 +32,7 @@ export async function insertCombProhibit_Service(itemSeq, ingrName, mixtureItemS
 }
 
 export async function getCombProhibit_Service(itemSeq, mixtureItemSeq) {
-    const connection = await pool.getConnection(async (conn) => conn);
+    const connection = await dbPool.getConnection(async (conn) => conn);
     try {
         const param = [itemSeq, mixtureItemSeq];
         const CombProhibitRow = await getCombProhibit_DAO(connection, param);
