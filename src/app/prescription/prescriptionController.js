@@ -114,9 +114,13 @@ export class prescriptionController {
         const itemSeq = req.query.itemSeq;
         const registerDate = req.query.registerDate;
         const prescriptionResponse = await getPrescriptionDetail_Service(id);
+        var responseList = [];
 
-        console.log(prescriptionResponse);
-        return res.send(prescriptionResponse);
+        for (var i = 0; i < prescriptionResponse.length; i++) {
+            responseList.push(await keysToCamel(prescriptionResponse[i]));
+        }
+        console.log(responseList);
+        return res.send(responseList);
     };
 
     deleteMedicineInPSPT_Controller = async function (req, res) {

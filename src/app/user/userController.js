@@ -98,6 +98,7 @@ export class userController {
     getUserInfo_Controller = async function (req, res) {
         const id = req.id;
         const infoResult = await getUserInfo_Service(id);
+        console.log(infoResult);
         return res.send(infoResult);
     };
     /**
@@ -111,16 +112,6 @@ export class userController {
 
         const updateUserProfileInfo = await updateUserInfo_Service(id, pw, userName, sex, breakfast, lunch, dinner);
         return res.send(updateUserProfileInfo);
-    };
-    /**
-     *  API No. 7
-     *  API Name : 사용자 대여 리스트 API
-     * [GET] /app/users/medicinelist
-     */
-    getUserMedicineList_Controller = async function (req, res) {
-        const id = req.id;
-        const userMedicineListResult = await getMedicineList_Service(id);
-        return res.send(userMedicineListResult);
     };
 }
 export default new userController();
