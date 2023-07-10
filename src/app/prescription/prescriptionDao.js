@@ -29,3 +29,9 @@ export async function getPrescription_DAO(connection, id) {
     const [Rows] = await connection.query(Query, id);
     return Rows;
 }
+
+export async function getPrescriptionDetail_DAO(connection, param) {
+    const Query = "select * from prescription where id=?and item_seq=? and register_date =?;";
+    const [Rows] = await connection.query(Query, param);
+    return Rows;
+}
