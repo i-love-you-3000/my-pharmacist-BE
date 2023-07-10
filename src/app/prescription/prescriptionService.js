@@ -1,6 +1,7 @@
 import {
     insertPrescription_DAO,
     getPrescription_DAO,
+    getPrescriptionDetail_DAO,
     updatePrescription_DAO,
     deleteMedicineInPSPT_DAO,
     deletePrescription_DAO,
@@ -38,6 +39,20 @@ export async function getPrescription_Service(id) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         const prescriptionRow = await getPrescription_DAO(connection, id);
+        return prescriptionRow;
+    } catch (err) {
+        console.log(err);
+        return SERVER_CONNECT_ERROR;
+    } finally {
+        connection.release();
+    }
+}
+
+export async function getPrescriptionDetail_Service(id, itemSeq, registerDate) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    try {
+        const params = [id, itemSeq, registerDate];
+        const prescriptionRow = await getPrescriptionDetail_DAO(connection, params);
         return prescriptionRow;
     } catch (err) {
         console.log(err);
