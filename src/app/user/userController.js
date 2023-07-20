@@ -1,4 +1,10 @@
-import { createUser_Service, login_Service, updateUserInfo_Service, updatePassword_Service } from "./userService.js";
+import {
+    createUser_Service,
+    login_Service,
+    updateUserInfo_Service,
+    updatePassword_Service,
+    getUserInfo_Service,
+} from "./userService.js";
 import {
     SUCCESS,
     PASSWORD_EMPTY,
@@ -53,18 +59,19 @@ export class userController {
     login_Controller = async function (req, res) {
         // 사용자 로그인
         const id = req.body.id;
-        const pw = req.body.pw;
-
-        if (!id) return res.send(ID_EMPTY); // code 2007
-        if (id.length < 6 || id.length > 20) return res.send(ID_LENGTH_ERROR); // code 2009
-        if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
-        if (pw.length < 6 || password.length > 20) return res.send(PASSWORD_LENGTH_ERROR); // code 2013
+        const pw = req.body.password;
+        console.log(req.body);
+        // if (!id) return res.send(ID_EMPTY); // code 2007
+        // if (id.length < 6 || id.length > 20) return res.send(ID_LENGTH_ERROR); // code 2009
+        // if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
+        // if (pw.length < 6 || password.length > 20) return res.send(PASSWORD_LENGTH_ERROR); // code 2013
 
         const loginResult = await login_Service(id, pw);
         res.cookie("refreshToken", loginResult.refreshToken, {
             httpOnly: true,
             maxAge: 3000000,
         });
+        console.log(loginResult);
         return res.send(loginResult);
     };
     /**

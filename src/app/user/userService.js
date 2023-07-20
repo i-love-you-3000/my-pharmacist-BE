@@ -1,24 +1,50 @@
-import { createUser_DAO, getUserInfo_DAO, updateUserInfo_DAO, updatePassword_DAO, getMedicineList_DAO } from "./userDao.js";
-import { pool } from "../../../config/db.js";
-import { ID_ALREADY_EXISTS, SUCCESS, FAIL, LOGIN_FAILURE, PASSWORD_WRONG, SIGNUP_SUCCESS, SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
+import {
+    createUser_DAO,
+    getUserInfo_DAO,
+    updateUserInfo_DAO,
+    updatePassword_DAO,
+    getMedicineList_DAO,
+    getId,
+} from "./userDao.js";
+import {
+    ID_ALREADY_EXISTS,
+    SUCCESS,
+    FAIL,
+    LOGIN_FAILURE,
+    PASSWORD_WRONG,
+    SIGNUP_SUCCESS,
+    SERVER_CONNECT_ERROR,
+} from "../../../config/baseResponseStatus.js";
 import jwt from "jsonwebtoken";
 import { createHash } from "crypto";
 import dotenv from "dotenv";
+import mysql from "mysql2/promise";
 
 dotenv.config("../../../.env");
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_DATABASE,
+    multipleStatements: true,
+    connectionLimit: 100,
+});
 // Create, Update, Delete
 
 async function userIdCheck(userId) {
     const connection = await pool.getConnection(async (conn) => conn);
+    var userIdRow;
     try {
-        const userIdRow = await selectUserId(connection, userId);
-        return userIdRow;
+        userIdRow = await getId(connection, userId);
     } catch (err) {
         console.log(err);
         return SERVER_CONNECT_ERROR;
     } finally {
         connection.release();
     }
+    return userIdRow;
 }
 
 export async function createUser_Service(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
@@ -46,13 +72,12 @@ export async function login_Service(id, pw) {
         if (userIdCheckResult.length < 1) return LOGIN_FAILURE; // code 1002 아이디가 존재 하지 않을 경우
 
         const hashedPassword = createHash("sha512").update(pw).digest("hex");
-        const params = [id, hashedPassword];
+        const params = [id, pw];
         const checkResult = await getUserInfo_DAO(connection, params);
-
         if (checkResult.length >= 1) {
             // DB에서 비교후에 id가 존재할 경우
-            const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
-            const refreshToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "14 days" });
+            const accessToken = jwt.sign({ id: id }, "gg", { expiresIn: "1h" });
+            const refreshToken = jwt.sign({ id: id }, "gg", { expiresIn: "14 days" });
             return {
                 isSuccess: true,
                 code: 1000,
@@ -112,15 +137,13 @@ export async function updateUserInfo_Service(userName, phoneNumber, address, inf
 export async function getUserInfo_Service(id) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [id];
-        const retrieveUserInfoResult = await getUserInfo_DAO(connection, param);
+        const retrieveUserInfoResult = await getUserInfo_DAO(connection, id);
+        console.log(retrieveUserInfoResult);
         return {
             isSuccess: true,
             code: 1000,
             message: "성공",
-            data: {
-                changedRows: retrieveUserInfoResult.changedRows,
-            },
+            data: retrieveUserInfoResult[0],
         };
     } catch (err) {
         return SERVER_CONNECT_ERROR;

@@ -56,7 +56,7 @@ export async function updateUserInfo_DAO(connection, originParam, updateParam) {
 // 7. 사용자 보유 약 리스트
 export async function getMedicineList_DAO(connection, param) {
     const Query = `
-        get item_seq from prescription where id = ?;
+        select item_seq from prescription where id = ?;
     `;
 
     const [Rows] = await connection.query(Query, param);
@@ -66,7 +66,7 @@ export async function getMedicineList_DAO(connection, param) {
 // 8. 사용자 정보 가져오기
 export async function getUserInfo_DAO(connection, param) {
     const Query = `
-        get * from users where id = ? and pw = ?;
+        select * from users where id = ?;
     `;
 
     const [Rows] = await connection.query(Query, param);

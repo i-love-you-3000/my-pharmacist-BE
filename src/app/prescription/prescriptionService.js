@@ -39,6 +39,12 @@ export async function getPrescription_Service(id) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         const prescriptionRow = await getPrescription_DAO(connection, id);
+        prescriptionRow.forEach((element) => {
+            var date = element.register_date;
+            var newDate = new Date(date.setHours(date.getHours() + 9));
+            console.log(newDate);
+            element["register_date"] = newDate;
+        });
         return prescriptionRow;
     } catch (err) {
         console.log(err);
@@ -53,6 +59,12 @@ export async function getPrescriptionDetail_Service(id, itemSeq, registerDate) {
     try {
         const params = [id, itemSeq, registerDate];
         const prescriptionRow = await getPrescriptionDetail_DAO(connection, params);
+        prescriptionRow.forEach((element) => {
+            var date = element.register_date;
+            var newDate = new Date(date.setHours(date.getHours() + 9));
+            console.log(newDate);
+            element["register_date"] = newDate;
+        });
         return prescriptionRow;
     } catch (err) {
         console.log(err);
@@ -66,7 +78,11 @@ export async function getPrescriptionDetail_Service(id, itemSeq, registerDate) {
 export async function updatePrescription_Service(id, item_seq, register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const param = [register_date, breakfast, lunch, dinner, baw, intakePeriod, expPeriod, id, item_seq];
+        var tBreakfast = breakfast == "true" ? true : false;
+        var tLunch = lunch == "true" ? true : false;
+        var tDinner = dinner == "true" ? true : false;
+        
+        const param = [ tBreakfast, tLunch, tDinner, baw, intakePeriod, expPeriod, id, item_seq,register_date];
         const prescriptionRow = await updatePrescription_DAO(connection, param);
         return prescriptionRow;
     } catch (err) {
@@ -91,10 +107,11 @@ export async function deleteMedicineInPSPT_Service(id, item_seq, register_date) 
     }
 }
 
-export async function deletePrescription_Service(id) {
+export async function deletePrescription_Service(id, item_seq) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
-        const prescriptionRow = await deletePrescription_DAO(connection, id);
+        const params = [id, item_seq];
+        const prescriptionRow = await deletePrescription_DAO(connection, params);
         return prescriptionRow;
     } catch (err) {
         console.log(err);
