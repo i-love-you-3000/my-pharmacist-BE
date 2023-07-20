@@ -5,6 +5,7 @@ import routes from "./config/route.js";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import moment from "moment-timezone";
 dotenv.config();
 const port = process.env.SERVER_PORT || 5000;
 
@@ -17,6 +18,10 @@ class App {
         this.getRouting();
 
         this.listen();
+        var today = new Date();
+        console.log(moment().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"));
+        console.log(process.env.TZ);
+        console.log(today);
     }
     setMiddleWare() {
         this.app.use(logger("dev"));

@@ -24,9 +24,9 @@ const camelize = (obj) =>
 async function keysToCamel(obj) {
     if (isPlainObject(obj)) {
         const n = {};
-        Object.keys(obj).forEach(async (k) => (n[await camelCase(k)] = await keysToCamel(obj[k])));
+        Object.keys(obj).forEach(async (k) => (n[camelCase(k)] = await keysToCamel(obj[k])));
         return n;
-    } else if (await util.isArray(obj)) obj.map(async (i) => await keysToCamel(i));
+    } else if (isArray(obj)) obj.map(async (i) => await keysToCamel(i));
     return obj;
 }
 
@@ -94,7 +94,6 @@ export class prescriptionController {
     getPrescription_Controller = async function (req, res) {
         const id = req.query.id;
         const prescriptionResponse = await getPrescription_Service(id);
-
         var responseList = [];
 
         for (var i = 0; i < prescriptionResponse.length; i++) {
@@ -113,7 +112,8 @@ export class prescriptionController {
         const id = req.query.id;
         const itemSeq = req.query.itemSeq;
         const registerDate = req.query.registerDate;
-        const prescriptionResponse = await getPrescriptionDetail_Service(id);
+
+        const prescriptionResponse = await getPrescriptionDetail_Service(id, itemSeq, registerDate);
         var responseList = [];
 
         for (var i = 0; i < prescriptionResponse.length; i++) {
@@ -128,8 +128,9 @@ export class prescriptionController {
         const itemSeq = req.body.itemSeq;
         const registerDate = req.body.registerDate;
 
-        if (!id) return res.send(ID_EMPTY);
-        if (!itemSeq) return res.send(ITEM_SEQ_EMPTY);
+        console.log(id);
+        //if (!id) return res.send(ID_EMPTY);
+        //if (!itemSeq) return res.send(ITEM_SEQ_EMPTY);
 
         const prescriptionResponse = await deleteMedicineInPSPT_Service(id, itemSeq, registerDate);
         return res.send(prescriptionResponse);
@@ -137,10 +138,12 @@ export class prescriptionController {
 
     deletePrescription_Controller = async function (req, res) {
         const id = req.body.id;
+        const register_date = req.body.registerDate;
 
-        if (!id) return res.send(ID_EMPTY);
+        console.log(req.body);
+        //if (!id) return res.send(ID_EMPTY);
 
-        const prescriptionResponse = await deletePrescription_Service(id);
+        const prescriptionResponse = await deletePrescription_Service(id, register_date);
         return res.send(prescriptionResponse);
     };
 }

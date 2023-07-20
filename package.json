@@ -25,6 +25,8 @@
     "mecab-ko": "^0.4.1",
     "mecab-ya": "^0.1.1",
     "method-override": "^3.0.0",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.3.3",
