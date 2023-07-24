@@ -29,15 +29,15 @@ export class combProhibitController {
     };
 
     getCombProhibit_Controller = async function (req, res) {
-        const itemSeq = req.body.itemSeq;
-        const mixtureItemSeq = req.body.mixtureItemSeq;
+        const itemSeq = req.query.itemSeq;
+        const mixtureItemSeq = req.query.mixtureItemSeq;
 
         const response = await getCombProhibit_Service(itemSeq, mixtureItemSeq);
         return res.send(response);
     };
 
     getCombProhibitByItemSeq_Controller = async function (req, res) {
-        const itemSeq = req.body.itemSeq;
+        const itemSeq = req.query.itemSeq;
 
         const response = await getCombProhibitByItemSeq_Service(itemSeq);
         return res.send(response);
