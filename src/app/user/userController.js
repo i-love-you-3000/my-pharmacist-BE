@@ -60,7 +60,6 @@ export class userController {
         // 사용자 로그인
         const id = req.body.id;
         const pw = req.body.password;
-        console.log(req.body);
         // if (!id) return res.send(ID_EMPTY); // code 2007
         // if (id.length < 6 || id.length > 20) return res.send(ID_LENGTH_ERROR); // code 2009
         // if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
@@ -71,6 +70,14 @@ export class userController {
             httpOnly: true,
             maxAge: 3000000,
         });
+
+        if (loginResult[0] !== undefined) {
+            req.session.uid = result[0].id;
+            1;
+            req.session.isLogined = true;
+
+            req.session.save();
+        }
         console.log(loginResult);
         return res.send(loginResult);
     };
@@ -80,6 +87,10 @@ export class userController {
      * [POST] /app/users/logout
      */
     logout = async function (req, res) {
+        delete req.session.uid;
+        delete req.session.isLogined;
+        req.session.save();
+
         res.cookie("refreshToken", "", {
             httpOnly: true,
         });
