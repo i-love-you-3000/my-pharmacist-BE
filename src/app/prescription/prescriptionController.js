@@ -95,7 +95,6 @@ export class prescriptionController {
         const id = req.query.id;
         const prescriptionResponse = await getPrescription_Service(id);
         var responseList = [];
-
         for (var i = 0; i < prescriptionResponse.length; i++) {
             responseList.push(await keysToCamel(prescriptionResponse[i]));
         }

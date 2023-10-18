@@ -6,7 +6,7 @@ import combProhibitRoute from "../src/app/combProhibit/combProhibitRoute.js";
 import authRoute from "../src/auth/authRoute.js";
 const router = Router();
 
-router.use("/app/user", userRoute);
+router.use("/app/users", userRoute);
 router.use("/app/medicine", medicineRoute);
 router.use("/app/prescription", prescriptionRoute);
 router.use("/app/cp", combProhibitRoute);

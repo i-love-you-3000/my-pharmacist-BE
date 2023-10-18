@@ -1,4 +1,4 @@
-import { insertUserToken_Dao, getUserToken_Dao, deleteUserToken_Dao } from "./userTokenDao";
+import { insertUserToken_Dao, getUserToken_Dao, deleteUserToken_Dao } from "./userTokenDao.js";
 import {
     ID_ALREADY_EXISTS,
     SUCCESS,
@@ -8,7 +8,6 @@ import {
     SIGNUP_SUCCESS,
     SERVER_CONNECT_ERROR,
 } from "../../../config/baseResponseStatus.js";
-import { createHash } from "crypto";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 
@@ -24,9 +23,15 @@ const pool = mysql.createPool({
     connectionLimit: 100,
 });
 
-export async function insertUserToken_Service(id, user_token) {
+export async function insertUserToken_Service(id) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
+        let now = Date.now();
+
+        const user_token = createHash("sha512")
+            .update(id + now)
+            .digest("hex");
+
         const params = [id, user_token];
         const userTokenRow = await insertUserToken_Dao(connection, params);
         return userTokenRow;

@@ -17,6 +17,7 @@ import {
     MEAL_EMPTY,
 } from "../../../config/baseResponseStatus.js";
 import dotenv from "dotenv";
+import { deleteUserToken_Service, getUserToken_Service, insertUserToken_Service } from "../userToken/userTokenService.js";
 dotenv.config();
 
 export class userController {
@@ -77,7 +78,9 @@ export class userController {
             req.session.isLogined = true;
 
             req.session.save();
+            insertUserToken_Service(id);
         }
+
         console.log(loginResult);
         return res.send(loginResult);
     };
@@ -87,10 +90,10 @@ export class userController {
      * [POST] /app/users/logout
      */
     logout = async function (req, res) {
+        deleteUserToken_Service(getUserToken_Service(req.session.uid));
         delete req.session.uid;
         delete req.session.isLogined;
         req.session.save();
-
         res.cookie("refreshToken", "", {
             httpOnly: true,
         });
