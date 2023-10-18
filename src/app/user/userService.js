@@ -47,14 +47,14 @@ async function userIdCheck(userId) {
     return userIdRow;
 }
 
-export async function createUser_Service(id, pw, userName, birth, sex, breakfast, lunch, dinner) {
+export async function createUser_Service(id, pw, username, birth, sex, breakfast, lunch, dinner) {
     const connection = await pool.getConnection(async (conn) => conn);
     try {
         const userIdCheckResult = await userIdCheck(id);
+        console.log(userIdCheckResult);
         if (userIdCheckResult.length > 0) return ID_ALREADY_EXISTS; // id가 이미 존재할 경우
 
-        const hashedPassword = createHash("sha512").update(pw).digest("hex");
-        const params = [id, hashedPassword, userName, birth, sex, breakfast, lunch, dinner];
+        const params = [id, pw, username, sex, breakfast, lunch, dinner, birth];
         const createUserIdResult = await createUser_DAO(connection, params);
         console.log(`추가된 일반 사용자 Idx: ${createUserIdResult[0].insertId}, ID: ${id}`);
         connection.release();

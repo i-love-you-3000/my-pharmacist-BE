@@ -17,6 +17,7 @@ import {
     MEAL_EMPTY,
 } from "../../../config/baseResponseStatus.js";
 import dotenv from "dotenv";
+import { DateTime } from "luxon";
 import { deleteUserToken_Service, getUserToken_Service, insertUserToken_Service } from "../userToken/userTokenService.js";
 dotenv.config();
 
@@ -32,23 +33,14 @@ export class userController {
         // 사용자 테이블에 정보 입력
         const id = req.body.id;
         const pw = req.body.pw;
-        const userName = req.body.userName;
-        const birth = req.body.birth;
-        const sex = req.body.sex;
-        const breakfast = req.body.breakfast;
-        const lunch = req.body.lunch;
-        const dinner = req.body.dinner;
-        console.log(id, pw);
-        if (!id) return res.send(ID_EMPTY); // code 2007
-        if (id.length < 6 || id.length > 20) return res.send(ID_LENGTH_ERROR); // code 2009
-        if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
-        if (pw.length < 6 || password.length > 20) return res.send(PASSWORD_LENGTH_ERROR); // code 2013
-        if (!userName) return res.send(SIGNUP_NAME_EMPTY); // code 2004
-        if (!birth) return res.send(BIRTH_EMPTY);
-        if (!sex) return res.send(SEX_EMPTY);
-        if (!breakfast || !lunch || !dinner) return res.send(MEAL_EMPTY);
+        const username = req.body.userName ?? "default";
+        const birth = req.body.birth ?? DateTime.now().toFormat("yyyy-MM-dd");
+        const sex = req.body.sex ?? 0;
+        const breakfast = DateTime.fromISO(req.body.breakfast).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
+        const lunch = DateTime.fromISO(req.body.lunch).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
+        const dinner = DateTime.fromISO(req.body.dinner).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
 
-        const signUpResponse = await createUser_Service(id, pw, userName, birth, sex, breakfast, lunch, dinner);
+        const signUpResponse = await createUser_Service(id, pw, username, birth, sex, breakfast, lunch, dinner);
         return res.send(signUpResponse);
     };
 
