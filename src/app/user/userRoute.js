@@ -6,7 +6,7 @@ import userController from "./userController.js";
 router.post("/", userController.createUser_Controller); // 회원가입 API
 router.post("/login", userController.login_Controller); // 로그인 API
 router.post("/logout", userController.logout); //로그아웃 API
-
+router.post("/register", userController.createUser_Controller);
 //router.patch('/password', authentication, userController.updatePassword_Controller); // 비밀번호 변경 API
 
 router.get("/profile", userController.getUserInfo_Controller); //프로필 API

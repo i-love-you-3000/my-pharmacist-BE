@@ -38,7 +38,7 @@ export class userController {
         const breakfast = req.body.breakfast;
         const lunch = req.body.lunch;
         const dinner = req.body.dinner;
-
+        console.log(id, pw);
         if (!id) return res.send(ID_EMPTY); // code 2007
         if (id.length < 6 || id.length > 20) return res.send(ID_LENGTH_ERROR); // code 2009
         if (!pw) return res.send(PASSWORD_EMPTY); // code 2001
