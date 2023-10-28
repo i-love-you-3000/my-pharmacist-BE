@@ -93,15 +93,12 @@ export class prescriptionController {
 
     getPrescription_Controller = async function (req, res) {
         const id = req.query.id;
+        console.log(id)
         const prescriptionResponse = await getPrescription_Service(id);
         var responseList = [];
         for (var i = 0; i < prescriptionResponse.length; i++) {
             responseList.push(await keysToCamel(prescriptionResponse[i]));
         }
-        // prescriptionResponse.forEach(async function (obj) {
-        //     console.log(obj);
-        //     await responseList.push(await keysToCamel(obj));
-        // });
 
         console.log(responseList);
         return await res.send(responseList);
@@ -118,7 +115,7 @@ export class prescriptionController {
         for (var i = 0; i < prescriptionResponse.length; i++) {
             responseList.push(await keysToCamel(prescriptionResponse[i]));
         }
-        console.log(responseList);
+        console.log("RESULT",prescriptionResponse);
         return res.send(responseList);
     };
 

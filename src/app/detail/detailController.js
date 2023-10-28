@@ -4,7 +4,7 @@ import {
     updateUserInfo_Service,
     updatePassword_Service,
     getUserInfo_Service,
-} from "./userService.js";
+} from "./detailService.js";
 import {
     SUCCESS,
     PASSWORD_EMPTY,
@@ -34,12 +34,13 @@ export class userController {
         const id = req.body.id;
         const pw = req.body.pw;
         const username = req.body.userName ?? "default";
+        const birth = req.body.birth ?? DateTime.now().toFormat("yyyy-MM-dd");
+        const sex = req.body.sex ?? 0;
         const breakfast = DateTime.fromISO(req.body.breakfast).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
         const lunch = DateTime.fromISO(req.body.lunch).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
         const dinner = DateTime.fromISO(req.body.dinner).toFormat("HH:mm") ?? DateTime.now().toFormat("HH:mm");
 
-        const signUpResponse = await createUser_Service(id, pw, username, breakfast, lunch, dinner);
-        console.log(signUpResponse)
+        const signUpResponse = await createUser_Service(id, pw, username, birth, sex, breakfast, lunch, dinner);
         return res.send(signUpResponse);
     };
 
@@ -50,7 +51,6 @@ export class userController {
      */
     login_Controller = async function (req, res) {
         // 사용자 로그인
-        console.log(req)
         const id = req.body.id;
         const pw = req.body.password;
         // if (!id) return res.send(ID_EMPTY); // code 2007

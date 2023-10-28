@@ -28,45 +28,42 @@ const option = {
 
 const sessionStore = new MySQLStore(option);
 
-class App {
-    constructor() {
-        this.app = express();
-        this.setMiddleWare();
-        this.getRouting();
-        this.listen();
-        const today = new Date();
+const app = express();
+
+const today = new Date();
         console.log(moment().tz("Asia/Seoul").format("YYYY-MM-DD HH:mm:ss"));
         console.log(process.env.TZ);
         console.log("PORT", port);
-        console.log(today);
-    }
-
-    setMiddleWare() {
-        this.app.use(logger("dev"));
-        this.app.use(json());
-        this.app.use(urlencoded({ extended: false }));
-        this.app.use(methodOverride());
-        this.app.use(cookieParser());
-        this.app.use(
+console.log(today);
+       
+app.use(logger("dev"));
+       app.use(json());
+       app.use(urlencoded({ extended: false }));
+    app.use(methodOverride());
+app.use(cookieParser());
+app.use(
             session({
                 secret: process.env.SESSION_KEY,
                 resave: false,
                 saveUninitialized: true,
                 store: sessionStore,
             })
-        );
-        this.app.use(cors());
-    }
+);
+        
+const whitelist = ["http://localhost:8080", "http://localhost:8081", "http://localhost:19000"];
 
-    getRouting() {
-        this.app.use("/", routes);
+const corsOptions = {
+  origin: function (origin, callback) { 
+    if (whitelist.indexOf(origin) !== -1) { // 만일 whitelist 배열에 origin인자가 있을 경우
+      callback(null, true); // cors 허용
+    } else {
+      callback(new Error("Not Allowed Origin!")); // cors 비허용
     }
+  },
+};
+        app.use(cors(corsOptions));
 
-    listen() {
-        this.app.listen(port, () => {
-            console.log(`Server is running on ${port}`);
-        });
-    }
-}
-
-export default new App().app;
+app.use("/", routes);
+app.listen(port, () => {
+    console.log(`Server is running on ${port}`);
+});

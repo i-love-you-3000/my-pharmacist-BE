@@ -1,19 +1,17 @@
 // 1. 회원 가입
 export async function createUser_DAO(connection, param) {
     const Query = `
-    INSERT INTO users(id, pw, username, breakfast, lunch, dinner) VALUES (?,?,?,?,?,?);
+    INSERT INTO users(id, pw, username, sex, breakfast, lunch, dinner, birth) VALUES (?,?,?,?,?,?,?,?);
                         `;
     try {
         const data = await connection.query(Query, param);
-        
         // 성공적으로 쿼리 실행
-        console.log(data);
-        return data;
     } catch (error) {
         console.error("쿼리 실행 중 오류 발생:", error);
         // 오류 처리 또는 기타 조치 수행
     }
-    
+    console.log(data);
+    return data;
 }
 
 // 2. 비밀번호 확인

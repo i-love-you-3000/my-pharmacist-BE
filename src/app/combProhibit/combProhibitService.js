@@ -9,11 +9,13 @@ import { SERVER_CONNECT_ERROR } from "../../../config/baseResponseStatus.js";
 import mysql from "mysql2/promise";
 
 const dbConfig = {
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "gt7291",
-    database: "my_ph",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PW,
+    database: process.env.DB_DATABASE,
+    multipleStatements: true,
+    connectionLimit: 100,
 };
 
 const dbPool = mysql.createPool(dbConfig);
